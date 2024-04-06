@@ -1,103 +1,83 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using MyProjectName.Models;
-using MyProjectName.Services;
 
-namespace MyProjectName.Controllers
+[ApiController]
+[Route("[controller]")]
+public class ProjectsController : ControllerBase
 {
-    [Route("api/projects")]
-    [ApiController]
-    public class ProjectController : ControllerBase
+    private readonly IStorageService _storageService;
+
+    public ProjectsController(IStorageService storageService)
     {
-        private readonly IProjectService _projectService;
+        _storageService = storageService;
+    }
 
-        public ProjectController(IProjectService projectService)
+    // GET: api/Projects
+    [HttpGet]
+    public IActionResult GetAllProjects()
+    {
+        IEnumerable<Project> projects = _storageService.GetAllProjects();
+        return Ok(projects);
+    }
+
+    // GET: api/Projects/{id}
+    [HttpGet("{id}")]
+    public IActionResult GetProjectById(string id)
+    {
+        Project project = _storageService.GetProjectById(id);
+        if (project == null)
         {
-            _projectService = projectService;
+            return NotFound();
+        }
+        return Ok(project);
+    }
+
+    // POST: api/Projects
+    [HttpPost]
+    public IActionResult AddProject([FromBody] Project project)
+    {
+        bool projectExists = _storageService.ProjectExists(project.Name);
+
+        if (projectExists)
+        {
+            return Conflict(new { message = "A project with the same name already exists." });
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectModel>>> GetProjects()
+        _storageService.AddProject(project);
+        return CreatedAtAction(nameof(GetProjectById), new { id = project.Id }, project);
+    }
+
+    // PUT: api/Projects/{id}
+    [HttpPut("{id}")]
+    public IActionResult EditProject(string id, [FromBody] Project project)
+    {
+        if (id != project.Id)
         {
-            try
-            {
-                var projects = await _projectService.GetAllProjectsAsync();
-                return Ok(projects);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            return BadRequest();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectModel>> GetProjectById(string id)
+        try
         {
-            try
-            {
-                var project = await _projectService.GetProjectByIdAsync(id);
-                if (project == null)
-                {
-                    return NotFound();
-                }
-                return Ok(project);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            _storageService.EditProject(project);
+            return NoContent();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<ProjectModel>> CreateProject(ProjectModel projectModel)
+        catch
         {
-            try
-            {
-                var createdProject = await _projectService.CreateProjectAsync(projectModel);
-                return CreatedAtAction(nameof(GetProjectById), new { id = createdProject.ProjectId }, createdProject);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(string id, ProjectModel projectModel)
-        {
-            try
-            {
-                var updatedProject = await _projectService.UpdateProjectAsync(id, projectModel);
-                if (updatedProject == null)
-                {
-                    return NotFound();
-                }
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProject(string id)
-        {
-            try
-            {
-                var deleted = await _projectService.DeleteProjectAsync(id);
-                if (!deleted)
-                {
-                    return NotFound();
-                }
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            return NotFound();
         }
     }
-}
+
+    // DELETE: api/Projects/{id}
+    [HttpDelete("{id}")]
+    public IActionResult DeleteProject(string id)
+    {
+        bool isDeleted = _storageService.DeleteProject(id);
+
+        if (!isDeleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+}   

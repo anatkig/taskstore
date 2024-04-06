@@ -1,103 +1,92 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using TaskStore.Models;
-using TaskStore.Services;
 
-namespace TaskStore.Controllers
+
+
+
+[ApiController]
+[Route("[controller]")]
+public class TasksController : ControllerBase
 {
-    [Route("api/tasks")]
-    [ApiController]
-    public class TaskController : ControllerBase
+    private readonly IStorageService _storageService;
+
+    public TasksController(IStorageService storageService)
     {
-        private readonly ITaskService _taskService;
+        _storageService = storageService;
+    }
 
-        public TaskController(ITaskService taskService)
+    // GET: api/Tasks
+    [HttpGet]
+    public IActionResult GetAllTasks()
+    {
+        IEnumerable<ProjectTask> tasks = _storageService.GetAllTasks();
+        return Ok(tasks);
+    }
+    // GET: api/Tasks/{id}
+    [HttpGet("{id}")]
+    public IActionResult GetTaskById(string id)
+    {
+        ProjectTask task = _storageService.GetTaskById(id);
+        if (task == null)
         {
-            _taskService = taskService;
+            return NotFound();
+        }
+        return Ok(task);
+    }
+
+    // GET: api/Tasks/ByProject/{projectId}
+    [HttpGet("byproject")]
+    public IActionResult GetTasksByProjectId([FromQuery] string projectId)
+    {
+        if (string.IsNullOrWhiteSpace(projectId))
+        {
+            return BadRequest("ProjectId is required.");
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
+        IEnumerable<ProjectTask> tasks = _storageService.GetTasksByProjectId(projectId);
+        return Ok(tasks);
+    }
+
+    // POST: api/Tasks
+    [HttpPost]
+    public IActionResult AddTask([FromBody] ProjectTask task)
+    {
+        _storageService.AddTask(task);
+        return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, task);
+    }
+
+    // PUT: api/Tasks/{id}
+    [HttpPut("{id}")]
+    public IActionResult EditTask(string id, [FromBody] ProjectTask task)
+    {
+        if (id != task.Id)
         {
-            try
-            {
-                var tasks = await _taskService.GetAllTasksAsync();
-                return Ok(tasks);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            return BadRequest();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TaskModel>> GetTaskById(string id)
+        try
         {
-            try
-            {
-                var task = await _taskService.GetTaskByIdAsync(id);
-                if (task == null)
-                {
-                    return NotFound();
-                }
-                return Ok(task);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            _storageService.EditTask(task);
+            return NoContent();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<TaskModel>> CreateTask(TaskModel taskModel)
+        catch (Exception)
         {
-            try
-            {
-                var createdTask = await _taskService.CreateTaskAsync(taskModel);
-                return CreatedAtAction(nameof(GetTaskById), new { id = createdTask.TaskId }, createdTask);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            return NotFound();
         }
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(string id, TaskModel taskModel)
+    // DELETE: api/Tasks/{id}
+    [HttpDelete("{id}")]
+    public IActionResult DeleteTask(string id)
+    {
+        try
         {
-            try
-            {
-                var updatedTask = await _taskService.UpdateTaskAsync(id, taskModel);
-                if (updatedTask == null)
-                {
-                    return NotFound();
-                }
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            _storageService.DeleteTask(id);
+            return NoContent();
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTask(string id)
+        catch (Exception)
         {
-            try
-            {
-                var deleted = await _taskService.DeleteTaskAsync(id);
-                if (!deleted)
-                {
-                    return NotFound();
-                }
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error: {ex.Message}");
-            }
+            return NotFound();
         }
     }
 }
