@@ -9,11 +9,11 @@ public class ProjectTask : ITableEntity
         PartitionKey = partitionKey;
     }
 
-    const string partitionKey = "TasksPartition";
-    public string Id { get; set; } = string.Empty; // Initialized to non-null value
-    public string Name { get; set; } = string.Empty; // Initialized to non-null value
-    public string Description { get; set; } = string.Empty; // Initialized to non-null value
-    public string ProjectId { get; set; } = string.Empty; // Initialized to non-null value
+    const string partitionKey = Constants.TasksPartition;
+    public string Id { get; set; } = string.Empty; 
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty; 
+    public string ProjectId { get; set; } = string.Empty;
     public string PartitionKey { get; set; }
     public string RowKey { get { return Id; } set { Id = value; } }
     public DateTimeOffset? Timestamp { get; set; }

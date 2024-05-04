@@ -8,15 +8,13 @@ public class Project : ITableEntity
     {
         PartitionKey = partitionKey;
     }
-    const string partitionKey = "ProjectsPartition";
+    const string partitionKey = Constants.ProjectsPartition;
     public string Id { get; set; } = string.Empty;
-    // Initialized to non-null value
-    public string Name { get; set; } = string.Empty; // Initialized to non-null value
-    public string Description { get; set; } = string.Empty; // Initialized to non-null value
-    public string Code { get; set; } = string.Empty; // Initialized to non-null value
 
-    public string Complexity { get; set; } = string.Empty; // Initialized to non-null value
-
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty; 
+    public string Code { get; set; } = string.Empty; 
+    public string Complexity { get; set; } = string.Empty; 
     public string PartitionKey { get; set; }
     public string RowKey { get { return Id; } set { Id = value; } }
 

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 [Route("[controller]")]
 public class ProjectsController : ControllerBase
 {
-    private readonly IStorageService _storageService;
+    private readonly IProjectService _storageService;
 
-    public ProjectsController(IStorageService storageService)
+    public ProjectsController(IProjectService storageService)
     {
         _storageService = storageService;
     }

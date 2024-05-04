@@ -8,9 +8,9 @@ using System.Collections.Generic;
 [Route("[controller]")]
 public class TasksController : ControllerBase
 {
-    private readonly IStorageService _storageService;
+    private readonly ITaskService _storageService;
 
-    public TasksController(IStorageService storageService)
+    public TasksController(ITaskService storageService)
     {
         _storageService = storageService;
     }
