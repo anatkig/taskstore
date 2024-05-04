@@ -1,27 +1,57 @@
-Project Plan: Task Management System
+# Project Task Storage Service
 
-Project Overview Objective: Develop a task management system that stores tasks related to projects. Technologies: .NET Core, Azure Table Storage, REST API. Version Control: GitHub.
-Task Breakdown and Estimation Task Entity:
-Fields: TaskId, TaskName, TaskDescription, ProjectId. Estimated Time: 1 day. Project Entity:
+## Description
+This project implements a task storage service where each task belongs to a project. Each task contains at least the following fields: identifier, task name, task description. The system is designed to easily accommodate adding new fields to the task entity. A project entity contains a name, identifier, and code, along with tasks.
 
-Fields: ProjectId, ProjectName, ProjectCode. Estimated Time: 1 day. Azure Table Storage Setup:
+The service is deployed on Microsoft Azure using Azure Table Storage to store projects and tasks. A temporary Azure subscription will be used for deployment, which can be created for free.
 
-Configure Azure Table Storage for storing tasks and projects. Estimated Time: 1 day. REST API Implementation:
+## Technologies Used
+- C# for backend development
+- ASP.NET Core for Rest API implementation
+- Azure Table Storage for data storage
+- Git for version control
+- Azure Cloud for deployment
 
-Create controllers for CRUD operations on tasks and projects. Implement endpoints for GET, POST, PUT, DELETE operations. Estimated Time: 2 days. Integration Testing:
+## Getting Started
+To clone and run the project locally, follow these steps:
 
-Test API endpoints for functionality and data integrity. Estimated Time: 1 day. Deployment to Azure:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/yourrepository.git
+2. cd yourrepository
+3. dotnet build
+4. dotnet run
 
-Deploy the application to Azure App Service. Configure Azure Table Storage connection. Estimated Time: 1 day. Documentation and README:
+## API Endpoints
 
-Document project setup instructions, API endpoints, and usage guidelines. Estimated Time: 1 day. 3. GitHub Repository Setup Create a new GitHub repository for version control. Initialize the repository with a README file, .gitignore (for .NET projects), and license. Add collaborators as needed for collaboration. 4. Development Process Day 1:
+### Projects
+- `GET /api/projects`
+  - Retrieve all projects.
 
-Create project structure and models for Task and Project entities. Implement Azure Table Storage setup and connection. Day 2-3:
+- `GET /api/projects/{projectId}`
+  - Retrieve a specific project by ID.
 
-Implement REST API controllers and endpoints for CRUD operations. Test API endpoints locally. Day 4:
+- `POST /api/projects`
+  - Create a new project.
 
-Perform integration testing to ensure API functionality. Fix any bugs or issues identified during testing. Day 5:
+- `PUT /api/projects/{projectId}`
+  - Update an existing project.
 
-Deploy the application to Azure App Service. Configure Azure Table Storage connection in the deployed environment. Day 6:
+- `DELETE /api/projects/{projectId}`
+  - Delete a project.
 
-Write documentation for the project, including setup instructions and API usage guidelines. Prepare README file with project overview, instructions, and contact information. 5. Review and Deployment Review the codebase for quality, readability, and adherence to coding standards. Perform final testing on the deployed application. Make any necessary adjustments based on feedback or testing results.
+### Tasks
+- `GET /api/projects/{projectId}/tasks`
+  - Retrieve all tasks for a project.
+
+- `GET /api/tasks/{taskId}`
+  - Retrieve a specific task by ID.
+
+- `POST /api/tasks`
+  - Create a new task.
+
+- `PUT /api/tasks/{taskId}`
+  - Update an existing task.
+
+- `DELETE /api/tasks/{taskId}`
+  - Delete a task.

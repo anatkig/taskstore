@@ -16,7 +16,7 @@ public class ProjectsController : ControllerBase
     [HttpGet]
     public IActionResult GetAllProjects()
     {
-        IEnumerable<Project> projects = _storageService.GetAllProjects();
+        var projects = _storageService.GetAllProjects();
         return Ok(projects);
     }
 
@@ -24,7 +24,7 @@ public class ProjectsController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetProjectById(string id)
     {
-        Project project = _storageService.GetProjectById(id);
+        var project = _storageService.GetProjectById(id);
         if (project == null)
         {
             return NotFound();
@@ -36,7 +36,7 @@ public class ProjectsController : ControllerBase
     [HttpPost]
     public IActionResult AddProject([FromBody] Project project)
     {
-        bool projectExists = _storageService.ProjectExists(project.Name);
+        var projectExists = _storageService.ProjectExists(project.Name);
 
         if (projectExists)
         {
@@ -71,7 +71,7 @@ public class ProjectsController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeleteProject(string id)
     {
-        bool isDeleted = _storageService.DeleteProject(id);
+        var isDeleted = _storageService.DeleteProject(id);
 
         if (!isDeleted)
         {

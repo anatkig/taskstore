@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
-
-
-
 [ApiController]
 [Route("[controller]")]
 public class TasksController : ControllerBase
@@ -26,7 +23,7 @@ public class TasksController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetTaskById(string id)
     {
-        ProjectTask task = _storageService.GetTaskById(id);
+        var task = _storageService.GetTaskById(id);
         if (task == null)
         {
             return NotFound();
@@ -43,7 +40,7 @@ public class TasksController : ControllerBase
             return BadRequest("ProjectId is required.");
         }
 
-        IEnumerable<ProjectTask> tasks = _storageService.GetTasksByProjectId(projectId);
+        var tasks = _storageService.GetTasksByProjectId(projectId);
         return Ok(tasks);
     }
 
